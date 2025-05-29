@@ -22,14 +22,20 @@ jobs:
           python-version: ${{ inputs.python-version }}
           architecture: x64
       
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v1.3.1
+      
+      - name: Install CMake
+        uses: lukka/run-cmake@v3.7.0  # 安装系统级 CMake
+      
       - name: Install build dependencies
         run: |
-          pip install --upgrade pip
-          pip install wheel setuptools cmake
+          pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+          pip install --upgrade pip wheel setuptools --retries 5
       
       - name: Build dlib wheel
         run: |
-          pip wheel dlib --no-binary :all: -w dist/
+          python -m pip wheel dlib --no-binary :all: -w dist/
           
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
