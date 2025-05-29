@@ -25,8 +25,10 @@ jobs:
       - name: Set up MSBuild
         uses: microsoft/setup-msbuild@v1.3.1
       
-      - name: Install CMake
-        uses: lukka/run-cmake@v3.7.0  # 安装系统级 CMake
+      - name: Install CMake via Chocolatey
+        run: |
+          choco install cmake -y
+          cmake --version  # 验证安装
       
       - name: Install build dependencies
         run: |
