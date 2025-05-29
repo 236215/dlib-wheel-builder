@@ -1,0 +1,38 @@
+name: Build dlib for Windows
+
+on:
+  workflow_dispatch:
+    inputs:
+      python-version:
+        description: 'Python version (e.g., 3.11)'
+        required: true
+        default: '3.11'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python ${{ inputs.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ inputs.python-version }}
+          architecture: x64
+      
+      - name: Install build dependencies
+        run: |
+          pip install --upgrade pip
+          pip install wheel setuptools cmake
+      
+      - name: Build dlib wheel
+        run: |
+          pip wheel dlib --no-binary :all: -w dist/
+          
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dlib-wheel
+          path: dist/*.whl
